@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرحبًا بكم</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>مرحبًا بكم في موقعي!</h1>
+    <p>هذا الموقع يجمع عنوان IP لأغراض أمنية.</p>
+
+    <script>
+        // 1. الحصول على عنوان IP الخاص بالزائر
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const userIP = data.ip;
+                console.log("عنوان IP الزائر:", userIP);
+
+                // 2. إرسال العنوان إلى الخدمة المفضلة (اختر واحدة)
+                sendToTelegram(userIP);    // الطريقة 1: Telegram (مفضلة)
+                // sendToGoogleSheets(userIP); // الطريقة 2: جوجل شيتس
+                // sendToEmail(userIP);       // الطريقة 3: إيميل (Formspree)
+            })
+            .catch(error => console.error("خطأ في جلب IP:", error));
+
+        // ===== الطريقة 1: إرسال IP إلى Telegram =====
+        function sendToTelegram(ip) {
+            const botToken = "TOKEN_BOT_هنا"; // استبدل بـ token البوت
+            const chatId = "CHAT_ID_هنا";     // استبدل بـ chat ID
+            const message = `🛜 عنوان IP جديد: ${ip}`;
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}`)
+                .then(response => response.json())
+                .then(data => console.log("تم الإرسال إلى Telegram:", data))
+                .catch(err => console.error("خطأ في Telegram:", err));
+        }
+
+        // ===== الطريقة 2: حفظ IP في جوجل شيتس =====
+        function sendToGoogleSheets(ip) {
+            const sheetURL = "رابط_السكربت_هنا"; // استبدل برابط سكربت جوجل
+            fetch(`${sheetURL}?ip=${ip}`)
+                .then(response => response.text())
+                .then(data => console.log("تم الحفظ في جوجل شيتس:", data))
+                .catch(err => console.error("خطأ في جوجل شيتس:", err));
+        }
+
+        // ===== الطريقة 3: إرسال IP عبر الإيميل =====
+        function sendToEmail(ip) {
+            fetch("https://formspree.io/f/mqaqkyql", { //  Formspree ID
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ip: ip })
+            })
+                .then(response => console.log("تم الإرسال via إيميل"))
+                .catch(err => console.error("خطأ في الإيميل:", err));
+        }
+    </script>
+</body>
+</html>
